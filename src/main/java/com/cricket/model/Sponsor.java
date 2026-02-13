@@ -1,0 +1,77 @@
+package com.cricket.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import org.apache.commons.lang3.builder.DiffBuilder;
+import org.apache.commons.lang3.builder.DiffResult;
+import org.apache.commons.lang3.builder.Diffable;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
+
+@SuppressWarnings("unused")
+@Entity
+@Table(name = "Sponsor")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Sponsor
+{
+  @Id
+  @Column(name = "SponsorID")
+  private int sponsorId;
+  
+  @Column(name = "Prompt")
+  private String prompt;
+
+  @Column(name = "ImageName")
+  private String imagename;
+  
+  @Column(name = "Data")
+  private String text;
+    
+  public Sponsor() {
+		super();
+  }
+
+public Sponsor(int sponsorId) {
+	super();
+	this.sponsorId = sponsorId;
+}
+
+public int getSponsorId() {
+	return sponsorId;
+}
+
+public void setSponsorId(int sponsorId) {
+	this.sponsorId = sponsorId;
+}
+
+public String getPrompt() {
+	return prompt;
+}
+
+public void setPrompt(String prompt) {
+	this.prompt = prompt;
+}
+
+public String getImagename() {
+	return imagename;
+}
+
+public void setImagename(String imagename) {
+	this.imagename = imagename;
+}
+
+public String getText() {
+	return text;
+}
+
+public void setText(String text) {
+	this.text = text;
+}
+
+
+}

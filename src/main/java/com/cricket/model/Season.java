@@ -1,0 +1,50 @@
+package com.cricket.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
+
+@Entity
+@Table(name = "Season")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Season {
+
+  @Id
+  @Column(name = "SeasonId")
+  private int seasonId;
+	
+  @Column(name = "SeasonDescription")
+  private String seasonDescription;
+
+  @Column(name = "SeasonMatchTypeId")
+  private int seasonMatchTypeId;
+
+public int getSeasonId() {
+	return seasonId;
+}
+
+public void setSeasonId(int seasonId) {
+	this.seasonId = seasonId;
+}
+
+public String getSeasonDescription() {
+	return seasonDescription;
+}
+
+public void setSeasonDescription(String seasonDescription) {
+	this.seasonDescription = seasonDescription;
+}
+
+public int getSeasonMatchTypeId() {
+	return seasonMatchTypeId;
+}
+
+public void setSeasonMatchTypeId(int seasonMatchTypeId) {
+	this.seasonMatchTypeId = seasonMatchTypeId;
+}
+  
+}

@@ -1,0 +1,65 @@
+package com.cricket.service;
+
+import java.util.List;
+
+import com.cricket.model.Bugs;
+import com.cricket.model.Commentator;
+import com.cricket.model.Dictionary;
+import com.cricket.model.EverestBugs;
+import com.cricket.model.Fixture;
+import com.cricket.model.Ground;
+import com.cricket.model.InfobarStats;
+import com.cricket.model.LeaderBoard;
+import com.cricket.model.NameSuper;
+import com.cricket.model.POTT;
+import com.cricket.model.PerformanceBug;
+import com.cricket.model.Sponsor;
+import com.cricket.model.FantasyImages;
+import com.cricket.model.Player;
+import com.cricket.model.Playoff;
+import com.cricket.model.Pointers;
+import com.cricket.model.Performer;
+import com.cricket.model.Season;
+import com.cricket.model.Split;
+import com.cricket.model.Staff;
+import com.cricket.model.Statistics;
+import com.cricket.model.StatsType;
+import com.cricket.model.Team;
+import com.cricket.model.VariousText;
+import com.cricket.model.Venue;
+import com.cricket.model.Weather;
+
+public interface CricketService {
+  Player getPlayer(String whatToProcess, String valueToProcess);
+  Team getTeam(String whatToProcess, String valueToProcess);
+  Ground getGround(int ground_id);
+  List<StatsType> getAllStatsType();
+  StatsType getStatsType(int stats_type_id);
+  List<Player> getPlayers(String whatToProcess, String valueToProcess);
+  List<Team> getTeams();
+  List<NameSuper> getNameSupers();
+  List<InfobarStats> getInfobarStats();
+  List<Bugs> getBugs();
+  List<Split> getSplit();
+  List<Pointers> getPointers();
+  List<Ground> getGrounds();
+  List<Statistics> getAllStats();
+  List<Player> getArchivePlayers();
+  List<Player> getAllPlayer();
+  List<Venue> getVenues();
+  List<Dictionary> getDictionary();
+  List<Fixture> getFixtures();
+  List<VariousText> getVariousTexts();
+  List<Playoff> getPlayOff();
+  List<Season> getSeasons();
+  List<LeaderBoard> getLeaderBoards();
+  List<Commentator> getCommentator();
+  List<Staff> getStaff();
+  List<POTT> getPott();
+  List<Sponsor> getSponsor();
+  List<FantasyImages>  getFantasyImages();
+  List<Performer> getPerformer();
+  List<Weather> getWeather();
+  List<PerformanceBug> getPerformanceBugs();
+  List<EverestBugs> getEverestBugs();
+}

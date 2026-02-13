@@ -1,0 +1,165 @@
+package com.cricket.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
+
+@Entity
+@Table(name = "Pointers")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Pointers
+{
+  @Id
+  @Column(name = "PointersId")
+  private int pointersId;
+
+  @Column(name = "PROMPT")
+  private String prompt;
+  
+  @Column(name = "HEADER")
+  private String header;
+
+  @Column(name = "SUBHEADER")
+  private String subheader;
+  
+  @Column(name = "ROWS")
+  private int rows;
+  
+  @Column(name = "TEXT1")
+  private String text1;
+  
+  @Column(name = "TEXT2")
+  private String text2;
+  
+  @Column(name = "TEXT3")
+  private String text3;
+  
+  @Column(name = "TEXT4")
+  private String text4;
+  
+  @Column(name = "TEAM")
+  private String team;
+  
+  @Column(name = "PLAYER")
+  private String player;
+  
+
+  public Pointers() {
+		super();
+  }
+
+
+public int getPointersId() {
+	return pointersId;
+}
+
+
+public void setPointersId(int pointersId) {
+	this.pointersId = pointersId;
+}
+
+
+public String getPrompt() {
+	return prompt;
+}
+
+
+public void setPrompt(String prompt) {
+	this.prompt = prompt;
+}
+
+
+public String getText1() {
+	return text1;
+}
+
+
+public void setText1(String text1) {
+	this.text1 = text1;
+}
+
+
+public String getText2() {
+	return text2;
+}
+
+
+public void setText2(String text2) {
+	this.text2 = text2;
+}
+
+
+public String getText3() {
+	return text3;
+}
+
+
+public void setText3(String text3) {
+	this.text3 = text3;
+}
+
+
+public String getTeam() {
+	return team;
+}
+
+
+public void setTeam(String team) {
+	this.team = team;
+}
+
+
+public String getPlayer() {
+	return player;
+}
+
+
+public void setPlayer(String player) {
+	this.player = player;
+}
+
+
+public String getHeader() {
+	return header;
+}
+
+
+public void setHeader(String header) {
+	this.header = header;
+}
+
+
+public String getSubheader() {
+	return subheader;
+}
+
+
+public void setSubheader(String subheader) {
+	this.subheader = subheader;
+}
+
+
+public int getRows() {
+	return rows;
+}
+
+
+public void setRows(int rows) {
+	this.rows = rows;
+}
+
+
+public String getText4() {
+	return text4;
+}
+
+
+public void setText4(String text4) {
+	this.text4 = text4;
+}
+
+}
