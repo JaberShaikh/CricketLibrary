@@ -1,5 +1,6 @@
 package com.cricket.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -89,17 +90,17 @@ public class Setup {
 
   private boolean historicMatchLoaded;
   
-  private List<Player> homeSquad;
+  private List<Player> homeSquad = new ArrayList<Player>();
 
-  private List<Player> homeSubstitutes;
+  private List<Player> homeSubstitutes = new ArrayList<Player>();
   
-  private List<Player> awaySquad;
+  private List<Player> awaySquad = new ArrayList<Player>();
 
-  private List<Player> awaySubstitutes;
+  private List<Player> awaySubstitutes = new ArrayList<Player>();
   
-  private List<Player> homeOtherSquad;
+  private List<Player> homeOtherSquad = new ArrayList<Player>();
 
-  private List<Player> awayOtherSquad;
+  private List<Player> awayOtherSquad = new ArrayList<Player>();
 
   @JsonIgnore
   private Ground ground;

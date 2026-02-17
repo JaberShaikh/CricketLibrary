@@ -1,5 +1,6 @@
 package com.cricket.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,19 +80,19 @@ public class Inning {
 
   private Team bowling_team;
   
-  private List<BattingCard> battingCard;
+  private List<BattingCard> battingCard = new ArrayList<BattingCard>();
 
-  private List<Partnership> partnerships;
+  private List<Partnership> partnerships  = new ArrayList<Partnership>();
   
-  private List<BowlingCard> bowlingCard;
+  private List<BowlingCard> bowlingCard  = new ArrayList<BowlingCard>();
 
-  private List<Player> fielders;
+  private List<Player> fielders  = new ArrayList<Player>();
 
-  private List<Review> reviews;
+  private List<Review> reviews = new ArrayList<Review>();
 
-  private List<FallOfWicket> fallsOfWickets;
+  private List<FallOfWicket> fallsOfWickets = new ArrayList<FallOfWicket>();
 
-  private List<Spell> spells;
+  private List<Spell> spells = new ArrayList<Spell>();
   
   private InningStats inningStats;
 

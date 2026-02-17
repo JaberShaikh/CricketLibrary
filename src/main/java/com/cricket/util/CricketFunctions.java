@@ -2,9 +2,12 @@ package com.cricket.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -34,6 +37,112 @@ public class CricketFunctions {
 	
 	public static ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
 	private static ObjectMapper objectMapper = new ObjectMapper();
+	
+	public static MatchAllData readOrSaveMatchFile(String whatToProcess, String whichFileToProcess, MatchAllData match,Configuration config) 
+		throws JAXBException, StreamWriteException, DatabindException, IOException, URISyntaxException
+	{
+		switch (whatToProcess) {
+		case CricketUtil.WRITE:
+			if(whichFileToProcess.toUpperCase().contains(CricketUtil.SETUP)) {
+				Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.SETUP_DIRECTORY 
+						+ match.getMatch().getMatchFileName()), 
+						objectWriter.writeValueAsString(match.getSetup()).getBytes());
+				
+							
+				Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.BACK_UP_DIRECTORY 
+					+ CricketUtil.SETUP_DIRECTORY + match.getMatch().getMatchFileName()), 
+					objectWriter.writeValueAsString(match.getSetup()).getBytes());			
+			}
+			if(match.getSetup().getMatchDataUpdate() != null && match.getSetup().getMatchDataUpdate().equalsIgnoreCase(CricketUtil.START)) {
+				if(whichFileToProcess.toUpperCase().contains(CricketUtil.EVENT)) {
+					
+					Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.EVENT_DIRECTORY 
+						+ match.getMatch().getMatchFileName()), 
+						objectWriter.writeValueAsString(match.getEventFile()).getBytes());
+					Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.BACK_UP_DIRECTORY 
+						+ CricketUtil.EVENT_DIRECTORY + match.getMatch().getMatchFileName()),
+						objectWriter.writeValueAsString(match.getEventFile()).getBytes());			
+				}
+				if(whichFileToProcess.toUpperCase().contains(CricketUtil.MATCH)) {
+					
+					Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.MATCHES_DIRECTORY 
+						+ match.getMatch().getMatchFileName()), 
+						objectWriter.writeValueAsString(match.getMatch()).getBytes());
+					
+					
+					Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.BACK_UP_DIRECTORY 
+						+ CricketUtil.MATCHES_DIRECTORY + match.getMatch().getMatchFileName()), 
+						objectWriter.writeValueAsString(match.getMatch()).getBytes());			
+				}
+			}
+			break;
+			
+		case CricketUtil.READ:
+			
+			String mainCricketDirectory = CricketUtil.CRICKET_DIRECTORY;
+			if(config.getCricketDirectory() != null && config.getCricketDirectory().equalsIgnoreCase(CricketUtil.SECONDARY)) {
+				mainCricketDirectory = CricketUtil.CRICKET2_DIRECTORY;
+			}else if(config.getCricketDirectory() != null && config.getCricketDirectory().equalsIgnoreCase(CricketUtil.ARCHIVE)) {
+				mainCricketDirectory = CricketUtil.CRICKET_ARCHIVE_DIRECTORY + CricketUtil.ARCHIVE_MATCHES_DIRECTORY;
+			}
+			if(whichFileToProcess.toUpperCase().contains(CricketUtil.SETUP)) {
+				if(new File(mainCricketDirectory + CricketUtil.SETUP_DIRECTORY + match.getMatch().getMatchFileName()).exists() == true) {
+					match.setSetup(objectMapper.readValue(new File(mainCricketDirectory 
+						+ CricketUtil.SETUP_DIRECTORY + match.getMatch().getMatchFileName()), Setup.class));
+				}
+			}
+			if(whichFileToProcess.toUpperCase().contains(CricketUtil.EVENT)) {
+				if(new File(mainCricketDirectory + CricketUtil.EVENT_DIRECTORY + match.getMatch().getMatchFileName()).exists() == true) {
+					match.setEventFile(objectMapper.readValue(new File(mainCricketDirectory + CricketUtil.EVENT_DIRECTORY 
+						+ match.getMatch().getMatchFileName()), EventFile.class));
+				}
+			}
+			if(whichFileToProcess.toUpperCase().contains(CricketUtil.MATCH)) {
+				if(new File(mainCricketDirectory + CricketUtil.MATCHES_DIRECTORY + match.getMatch().getMatchFileName()).exists() == true) {
+					match.setMatch(objectMapper.readValue(new File(mainCricketDirectory + CricketUtil.MATCHES_DIRECTORY 
+						+ match.getMatch().getMatchFileName()), Match.class));
+				}
+			}
+			break;
+		}
+		return match;
+	}
+
+	public static String getInteractive(MatchAllData match,String type) throws IOException
+	{
+		return null;
+	}
+	
+	@SuppressWarnings("resource")
+	public static List<PrintWriter> processPrintWriter(Configuration config) throws IOException
+	{
+		List<PrintWriter> print_writer = new ArrayList<PrintWriter>();
+		
+		if(config.getPrimaryIpAddress() != null && !config.getPrimaryIpAddress().isEmpty()) {
+			if(!config.getPrimaryLanguage().equalsIgnoreCase("ENGLISH")) {
+				print_writer.add(new PrintWriter(new OutputStreamWriter(new Socket(config.getPrimaryIpAddress(), 
+						config.getPrimaryPortNumber()).getOutputStream(), StandardCharsets.UTF_8),true));
+			}else {
+				print_writer.add(new PrintWriter(new Socket(config.getPrimaryIpAddress(), 
+						config.getPrimaryPortNumber()).getOutputStream(), true));
+			}
+		}
+		
+		return print_writer;
+	}	
+	public static String deletePreview() throws IOException
+    {
+		if(new File(CricketUtil.PREVIEW).exists()) {
+			Files.delete(Paths.get(CricketUtil.PREVIEW));
+		}
+        return "";
+    }	
+	public static void DoadWriteCommandToAllViz(String SendTextIn, List<PrintWriter> print_writers) 
+	{
+		for(int i = 0; i < print_writers.size(); i++) {
+			print_writers.get(i).println(SendTextIn);
+		}
+	}	
 	
 	public static Speed getCurrentSpeed(String speedFilePath, Speed lastSpeed) throws IOException {
 		if(!speedFilePath.trim().isEmpty()) {
@@ -965,6 +1074,10 @@ public class CricketFunctions {
 	public static MatchAllData populateMatchVariables(CricketService cricketService, MatchAllData match) 
 			throws IllegalAccessException, InvocationTargetException 
 	{
+		if(match.getSetup().getGroundId() > 0) {
+			match.getSetup().setGround(cricketService.getGround(match.getSetup().getGroundId()));
+		}
+
 		List<Player> players = new ArrayList<Player>();
 		
 		for(Player plyr:match.getSetup().getHomeSquad()) {
@@ -1052,67 +1165,6 @@ public class CricketFunctions {
 		return match;
 	}   
 
-	public static MatchAllData readOrSaveMatchFile(String whatToProcess, String whichFileToProcess, MatchAllData match, boolean backUpAllFiles) 
-		throws JAXBException, StreamWriteException, DatabindException, IOException, URISyntaxException
-	{
-		switch (whatToProcess) {
-		case CricketUtil.WRITE:
-			if(whichFileToProcess.toUpperCase().contains(CricketUtil.SETUP)) {
-				Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.SETUP_DIRECTORY 
-					+ match.getMatch().getMatchFileName()), 
-					objectWriter.writeValueAsString(match.getSetup()).getBytes());			
-				if(backUpAllFiles == true) {
-					Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.BACK_UP_DIRECTORY 
-						+ CricketUtil.SETUP_DIRECTORY + match.getMatch().getMatchFileName()), 
-						objectWriter.writeValueAsString(match.getSetup()).getBytes());			
-				}
-			}
-			if(match.getSetup().getMatchDataUpdate() != null && match.getSetup().getMatchDataUpdate().equalsIgnoreCase(CricketUtil.START)) {
-				if(whichFileToProcess.toUpperCase().contains(CricketUtil.EVENT)) {
-					Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.EVENT_DIRECTORY 
-						+ match.getMatch().getMatchFileName()), 
-						objectWriter.writeValueAsString(match.getEventFile()).getBytes());
-					if(backUpAllFiles == true) {
-						Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.BACK_UP_DIRECTORY 
-							+ CricketUtil.EVENT_DIRECTORY + match.getMatch().getMatchFileName()),
-							objectWriter.writeValueAsString(match.getEventFile()).getBytes());			
-					}
-				}
-				if(whichFileToProcess.toUpperCase().contains(CricketUtil.MATCH)) {
-					Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.MATCHES_DIRECTORY 
-						+ match.getMatch().getMatchFileName()), 
-						objectWriter.writeValueAsString(match.getMatch()).getBytes());
-					if(backUpAllFiles == true) {
-						Files.write(Paths.get(CricketUtil.CRICKET_DIRECTORY + CricketUtil.BACK_UP_DIRECTORY 
-							+ CricketUtil.MATCHES_DIRECTORY + match.getMatch().getMatchFileName()), 
-							objectWriter.writeValueAsString(match.getMatch()).getBytes());			
-					}
-				}
-			}
-			break;
-		case CricketUtil.READ:
-			if(whichFileToProcess.toUpperCase().contains(CricketUtil.SETUP)) {
-				if(new File(CricketUtil.CRICKET_DIRECTORY + CricketUtil.SETUP_DIRECTORY + match.getMatch().getMatchFileName()).exists() == true) {
-					match.setSetup(new ObjectMapper().readValue(new File(CricketUtil.CRICKET_DIRECTORY 
-						+ CricketUtil.SETUP_DIRECTORY + match.getMatch().getMatchFileName()), Setup.class));
-				}
-			}
-			if(whichFileToProcess.toUpperCase().contains(CricketUtil.EVENT)) {
-				if(new File(CricketUtil.CRICKET_DIRECTORY 
-					+ CricketUtil.EVENT_DIRECTORY + match.getMatch().getMatchFileName()).exists() == true) {
-					match.setEventFile(new ObjectMapper().readValue(new File(CricketUtil.CRICKET_DIRECTORY 
-						+ CricketUtil.EVENT_DIRECTORY + match.getMatch().getMatchFileName()), EventFile.class));
-					}
-			}
-			if(whichFileToProcess.toUpperCase().contains(CricketUtil.MATCH)) {
-				match.setMatch(new ObjectMapper().readValue(new File(CricketUtil.CRICKET_DIRECTORY 
-					+ CricketUtil.MATCHES_DIRECTORY + match.getMatch().getMatchFileName()), Match.class));
-			}
-			break;
-		}
-		return match;
-	}
-	
 	public static BattingCard processBattingcard(CricketService cricketService,BattingCard bc)
 	{
 		bc.setPlayer(cricketService.getPlayer(CricketUtil.PLAYER, String.valueOf(bc.getPlayerId())));
